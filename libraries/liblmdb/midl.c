@@ -15,6 +15,7 @@
  * top-level directory of the distribution or, alternatively, at
  * <http://www.OpenLDAP.org/license.html>.
  */
+#include <config.h>
 
 #include <limits.h>
 #include <string.h>
