@@ -1,6 +1,6 @@
-ACLOCAL_AMFLAGS=-I m4
+ACLOCAL_AMFLAGS=-I m4 -I gl/m4
 
-SUBDIRS = #include src doc tests extras
+SUBDIRS = gl
 
 dist_doc_DATA = CHANGES \
 		COPYRIGHT \
@@ -8,12 +8,6 @@ dist_doc_DATA = CHANGES \
 		intro.doc
 
 dist_noinst_DATA = #CodingStyle
-
-EXTRA_DIST = #gpl-2.0.txt \
-	lgpl-2.1.txt \
-	lgpl-relicensing.txt
-
-AM_CPPFLAGS=$(CC_NO_ROBUST)
 
 AM_LDFLAGS=$(LT_NO_UNDEFINED)
 
@@ -29,8 +23,12 @@ LDADD = liblmdb.la
 liblmdb_la_SOURCES = lmdb.h mdb.c midl.h midl.c
 liblmdb_la_CFLAGS = $(AM_CFLAGS)
 liblmdb_la_LDFLAGS = -version-info $(LMDB_LIBRARY_VERSION) $(AM_LDFLAGS)
+liblmdb_la_LIBADD = $(LIBPTHREAD)
+
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = liblmdb.pc
+
+EXTRA_DIST = gl/m4/gnulib-cache.m4
 
 TESTS = tests/mtest1.sh

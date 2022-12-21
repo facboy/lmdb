@@ -13,6 +13,8 @@
  */
 
 /* Tests for sorted duplicate DBs with fixed-size keys */
+#include <config.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -46,7 +46,7 @@ AM_INIT_AUTOMAKE([1.12 -Wall -Werror -Wno-extra-portability foreign dist-zstd no
 ##                               ##
 
 AS_CASE([$host],
-  [*-cygwin*], [LT_NO_UNDEFINED="-no-undefined" CC_NO_ROBUST="-DMDB_USE_ROBUST=0"]
+  [*-cygwin*], [LT_NO_UNDEFINED="-no-undefined"]
 )
 
 
@@ -56,6 +56,8 @@ AS_CASE([$host],
 
 # Choose the C compiler
 AC_PROG_CC
+gl_EARLY
+
 # AC_PROG_CC_STDC was merged in AC_PROG_CC in autoconf 2.70
 m4_version_prereq([2.70], [], [AC_PROG_CC_STDC])
 
@@ -78,6 +80,11 @@ AC_LANG_PUSH([C])
 AX_APPEND_COMPILE_FLAGS([WARN_FLAGS_LIST], [WARN_CFLAGS], [-Werror])
 AC_LANG_POP([C])
 
+gl_INIT
+
+AS_IF([test "$gl_cv_const_PTHREAD_MUTEX_ROBUST" = "no"],
+	[AC_DEFINE([MDB_USE_ROBUST], [0], [PTHREAD_MUTEX_ROBUST is not available.])])
+
 # Initialize and configure libtool
 LT_INIT
 
@@ -90,7 +97,6 @@ LT_INIT
 AC_SUBST([LMDB_LIBRARY_VERSION], [lmdb_lib_version])
 
 AC_SUBST(LT_NO_UNDEFINED)
-AC_SUBST(CC_NO_ROBUST)
 
 AM_CFLAGS="$WARN_CFLAGS $PTHREAD_CFLAGS"
 AC_SUBST(AM_CFLAGS)
@@ -101,7 +107,8 @@ AC_SUBST(AM_CFLAGS)
 ##                                     ##
 
 AC_CONFIG_FILES([
-	Makefile
+	gl/Makefile
 	liblmdb.pc
+	Makefile
 ])
 AC_OUTPUT

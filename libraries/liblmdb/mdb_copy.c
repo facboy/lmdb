@@ -11,6 +11,8 @@
  * top-level directory of the distribution or, alternatively, at
  * <http://www.OpenLDAP.org/license.html>.
  */
+#include <config.h>
+
 #ifdef _WIN32
 #include <windows.h>
 #define	MDB_STDOUT	GetStdHandle(STD_OUTPUT_HANDLE)

@@ -13,6 +13,7 @@
  */
 
 /* Just like mtest.c, but using a subDB instead of the main DB */
+#include <config.h>
 
 #include <stdio.h>
 #include <stdlib.h>
