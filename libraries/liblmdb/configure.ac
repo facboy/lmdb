@@ -51,6 +51,10 @@ AS_CASE([$host],
   [*-cygwin*], [LT_NO_UNDEFINED="-no-undefined"]
 )
 
+AS_CASE([$host],
+  [*-cygwin*], [AC_DEFINE([MDB_USE_POSIX_SEM], [1], [Use POSIX semaphores on Cygwin.])]
+)
+
 
 ##                   ##
 ## C compiler checks ##
