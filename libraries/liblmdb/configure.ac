@@ -48,11 +48,14 @@ AM_INIT_AUTOMAKE([1.12 -Wall -Werror -Wno-extra-portability foreign dist-zstd no
 ##                               ##
 
 AS_CASE([$host],
-  [*-cygwin*], [LT_NO_UNDEFINED="-no-undefined"]
-)
-
-AS_CASE([$host],
-  [*-cygwin*], [AC_DEFINE([MDB_USE_POSIX_SEM], [1], [Use POSIX semaphores on Cygwin.])]
+  [*-cygwin*], [
+    LT_NO_UNDEFINED="-no-undefined"
+    AC_DEFINE([MDB_USE_POSIX_SEM], [1], [Use POSIX semaphores on Cygwin.])
+  ],
+  [*-msys*], [
+    LT_NO_UNDEFINED="-no-undefined"
+    AC_DEFINE([MDB_USE_POSIX_SEM], [1], [Use POSIX semaphores on msys2.])
+  ]
 )
 
 
