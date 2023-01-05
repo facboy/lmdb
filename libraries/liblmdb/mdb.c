@@ -4050,6 +4050,10 @@ mdb_env_map(MDB_env *env, void *addr)
 		if (ftruncate(env->me_fd, env->me_mapsize) < 0)
 			return ErrCode();
 	}
+#ifdef __CYGWIN__
+	/* Need to add non-standard MAP_AUTOGROW flag for cygwin */
+	mmap_flags |= MAP_AUTOGROW;
+#endif
 	env->me_map = mmap(addr, env->me_mapsize, prot, mmap_flags,
 		env->me_fd, 0);
 	if (env->me_map == MAP_FAILED) {
