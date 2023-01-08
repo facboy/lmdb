@@ -12,5 +12,6 @@ make \
   SOEXT=".dll.a" \
   CPPFLAGS="-DMDB_USE_POSIX_SEM=1" \
   LDOUTFLAGS='-Wl,--out-implib,$@ -o '"${LMDB_DLL}" \
+  PKGCONFIG_SONAME="${LMDB_DLL}" \
   LMDB_DLL="${LMDB_DLL}" \
   "$@"

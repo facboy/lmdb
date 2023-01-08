@@ -29,41 +29,49 @@ LDOUTFLAGS = -o $@
 SOLIBS	=
 SOEXT	= .so
 XIPROGS =
+PKGCONFIG_SONAME = liblmdb$(SOEXT)
 prefix	= /usr/local
 exec_prefix = $(prefix)
 bindir = $(exec_prefix)/bin
 libdir = $(exec_prefix)/lib
+pcdir = $(libdir)/pkgconfig
 includedir = $(prefix)/include
 datarootdir = $(prefix)/share
 mandir = $(datarootdir)/man
 
 ########################################################################
 
+VERSION = 0.9.30
+
 IHDRS	= lmdb.h
 ILIBS	= liblmdb.a liblmdb$(SOEXT)
+IPC = lmdb.pc
 IPROGS	= mdb_stat mdb_copy mdb_dump mdb_load $(XIPROGS)
 IDOCS	= mdb_stat.1 mdb_copy.1 mdb_dump.1 mdb_load.1
 PROGS	= $(IPROGS) mtest mtest2 mtest3 mtest4 mtest5
 all:	$(ILIBS) $(PROGS)
 
-install: $(ILIBS) $(IPROGS) $(IHDRS)
+install: $(ILIBS) $(IPC) $(IPROGS) $(IHDRS)
 	mkdir -p $(DESTDIR)$(bindir)
 	mkdir -p $(DESTDIR)$(libdir)
+	mkdir -p $(DESTDIR)$(pcdir)
 	mkdir -p $(DESTDIR)$(includedir)
 	mkdir -p $(DESTDIR)$(mandir)/man1
 	for f in $(IPROGS); do cp $$f $(DESTDIR)$(bindir); done
 	for f in $(ILIBS); do cp $$f $(DESTDIR)$(libdir); done
+	for f in $(IPC); do cp $$f $(DESTDIR)$(pcdir); done
 	for f in $(IHDRS); do cp $$f $(DESTDIR)$(includedir); done
 	for f in $(IDOCS); do cp $$f $(DESTDIR)$(mandir)/man1; done
 
 uninstall:
 	for f in $(IPROGS); do rm $(DESTDIR)$(bindir)/$$f; done
 	for f in $(ILIBS); do rm $(DESTDIR)$(libdir)/$$f; done
+	for f in $(IPC); do rm $(DESTDIR)$(pcdir)/$$f; done
 	for f in $(IHDRS); do rm $(DESTDIR)$(includedir)/$$f; done
 	for f in $(IDOCS); do rm $(DESTDIR)$(mandir)/man1/$$f; done
 
 clean:
-	rm -rf $(PROGS) *.[ao] *.[ls]o *~ testdb
+	rm -rf $(PROGS) *.[ao] *.[ls]o *.pc *~ testdb
 
 test:	all
 	rm -rf testdb && mkdir testdb
@@ -77,6 +85,15 @@ liblmdb$(SOEXT):	mdb.lo midl.lo
 	$(CC) $(LDFLAGS) -pthread -shared $(LDOUTFLAGS) mdb.lo midl.lo $(SOLIBS)
 
 $(LMDB_DLL): liblmdb$(SOEXT)
+
+lmdb.pc:
+	PACKAGE_VERSION=$(VERSION) \
+		PREFIX=$(prefix) \
+		EXEC_PREFIX=$(exec_prefix) \
+		LIBDIR=$(libdir) \
+		INCLUDEDIR=$(includedir) \
+		LIBLMDB_SONAME=$(PKGCONFIG_SONAME) \
+		envsubst '$${PACKAGE_VERSION} $${PREFIX} $${EXEC_PREFIX} $${LIBDIR} $${INCLUDEDIR} $${LIBLMDB_SONAME}' < lmdb.pc.in > lmdb.pc
 
 mdb_stat: mdb_stat.o liblmdb.a
 mdb_copy: mdb_copy.o liblmdb.a
