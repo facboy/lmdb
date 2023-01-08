@@ -25,8 +25,10 @@ THREADS = -pthread
 OPT = -O2 -g
 CFLAGS	= $(THREADS) $(OPT) $(W) $(XCFLAGS)
 LDLIBS	=
+LDOUTFLAGS = -o $@
 SOLIBS	=
 SOEXT	= .so
+XIPROGS =
 prefix	= /usr/local
 exec_prefix = $(prefix)
 bindir = $(exec_prefix)/bin
@@ -39,7 +41,7 @@ mandir = $(datarootdir)/man
 
 IHDRS	= lmdb.h
 ILIBS	= liblmdb.a liblmdb$(SOEXT)
-IPROGS	= mdb_stat mdb_copy mdb_dump mdb_load
+IPROGS	= mdb_stat mdb_copy mdb_dump mdb_load $(XIPROGS)
 IDOCS	= mdb_stat.1 mdb_copy.1 mdb_dump.1 mdb_load.1
 PROGS	= $(IPROGS) mtest mtest2 mtest3 mtest4 mtest5
 all:	$(ILIBS) $(PROGS)
@@ -54,6 +56,12 @@ install: $(ILIBS) $(IPROGS) $(IHDRS)
 	for f in $(IHDRS); do cp $$f $(DESTDIR)$(includedir); done
 	for f in $(IDOCS); do cp $$f $(DESTDIR)$(mandir)/man1; done
 
+uninstall:
+	for f in $(IPROGS); do rm $(DESTDIR)$(bindir)/$$f; done
+	for f in $(ILIBS); do rm $(DESTDIR)$(libdir)/$$f; done
+	for f in $(IHDRS); do rm $(DESTDIR)$(includedir)/$$f; done
+	for f in $(IDOCS); do rm $(DESTDIR)$(mandir)/man1/$$f; done
+
 clean:
 	rm -rf $(PROGS) *.[ao] *.[ls]o *~ testdb
 
@@ -66,7 +74,9 @@ liblmdb.a:	mdb.o midl.o
 
 liblmdb$(SOEXT):	mdb.lo midl.lo
 #	$(CC) $(LDFLAGS) -pthread -shared -Wl,-Bsymbolic -o $@ mdb.o midl.o $(SOLIBS)
-	$(CC) $(LDFLAGS) -pthread -shared -o $@ mdb.lo midl.lo $(SOLIBS)
+	$(CC) $(LDFLAGS) -pthread -shared $(LDOUTFLAGS) mdb.lo midl.lo $(SOLIBS)
+
+$(LMDB_DLL): liblmdb$(SOEXT)
 
 mdb_stat: mdb_stat.o liblmdb.a
 mdb_copy: mdb_copy.o liblmdb.a
