@@ -1,0 +1,12 @@
+prefix=/usr/local
+exec_prefix=/usr/local
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+soname=lmdb.dll
+
+Name: LMDB
+Description: LMDB is compact, fast, powerful, and robust and implements a simplified variant of the BerkeleyDB (BDB) API
+Version: @LMDB_VERSION@
+Requires:
+Libs: -L${libdir} -llmdb
+Cflags: -I${includedir} 
